@@ -1,20 +1,3 @@
-
-
-# Session 2 continuity variables (Rule settings). Do not change these.
-THRESHOLD = 2.0
-FEATURE_NAME = "petal_length"
-POSITIVE_LABEL = "setosa"
-NEGATIVE_LABEL = "not_setosa"
-LABEL_KEY = "species"
-
-
-
-correct = 0      # Count of correct predictions
-wrong = 0        # Count of wrong predictions
-total = 0        # Total samples processed
-y_pred_list = []  # List of all predictions made
-
-
 flower1 = {
     "id": "flower1",
     "sepal_length": 5.1,
@@ -24,26 +7,51 @@ flower1 = {
     "species": "setosa"
 }
 
-# Task 1: Create A dictionary for second flower
+# Task 1: Create a dictionary for second flower
+flower2 = {
+    "id": "flower2",
+    "sepal_length": 4.9,
+    "sepal_width": 3.0,
+    "petal_length": 1.4,
+    "petal_width": 0.2,
+    "species": "setosa"
+}
 
-# flower2 = {
-# "id": "flower2",
-# <your code here>: 4.9,
-# <your code here> add key value
-# "species": "setosa"
-# <your code here> remember to close me for a dict
-
+print(flower1["id"])
 
 # Task 2: Create list of dictionaries
-# dataset= <your code here>
+dataset = [flower1, flower2]
 
+# Define classification variables
+threshold = 2.0
+positive_label = "setosa"
+negative_label = "not_setosa"
+total = 0
+correct = 0
+wrong = 0
 
-# Task 3: Create a for loop to process the dataset
-# for <your code here> in dataset:
-#     print(<your code here>["id"], <your code here>["petal_length"], <your code here>["species"])
+# Task 3 and Task 4: Process and classify the dataset
+y_pred_list = []
 
-# Task 4: Use an if-else statement to classify each sample
-# if <your code here>["petal_length"] < threshold:
-#     y_pred = positive_label
-# <your code here>
-#     <your code here> = negative_label
+for sample in dataset:
+    print(sample["id"], sample["petal_length"], sample["species"])
+
+    total += 1
+
+    if sample["petal_length"] < threshold:
+        y_pred = positive_label
+    else:
+        y_pred = negative_label
+
+    y_pred_list.append(y_pred)
+
+    # Check correct or wrong
+    if y_pred == sample["species"]:
+        correct += 1
+    else:
+        wrong += 1
+
+print("Correct:", correct)
+print("Wrong:", wrong)
+print("Total:", total)
+print("Predictions:", y_pred_list)
