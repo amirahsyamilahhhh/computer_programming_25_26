@@ -37,6 +37,7 @@ class IrisRuleClassifier:
 
     # Task 1: Define the __init__ Method
     def __init__(self, threshold=2.0):
+        
         """Store configuration inside the object.
 
         This method runs automatically when you create an IrisRuleClassifier.
@@ -48,14 +49,16 @@ class IrisRuleClassifier:
                                are predicted as setosa.
         """
         # Store the threshold as an attribute on self.
-        # self.threshold = <your code here>
+        self.threshold = 2.0
 
         # We enforce these attribute names so later sessions can reuse your class.
-        # self.positive_label = <your code here>   # should be the string "setosa"
-        # self.negative_label = <your code here>   # should be the string "not_setosa"
+        self.positive_label = "setosa"  # should be the string "setosa"
+        self.negative_label = "not setosa"   # should be the string "not_setosa"
+         
         pass
 
     def print_status(self, status_text):
+
         """Print a small status message in the format: [STATUS] <status_text>.
 
         This method is provided as a complete example of how to refactor
@@ -84,6 +87,13 @@ class IrisRuleClassifier:
         # 2. Compare it to self.threshold
         # 3. Return self.positive_label if petal_length < self.threshold
         # 4. Otherwise return self.negative_label
+
+        petal_length = sample["petal_length"]
+        if petal_length < self.threshold:
+            return self.positive_label
+        else:
+            return self.negative_label
+
         pass
 
     # Task 3: Implement derive_true_label
@@ -124,10 +134,17 @@ class IrisRuleClassifier:
             tuple: Updated (correct, wrong, total, y_pred_list).
         """
         # 1. If y_pred == y_true, increase correct by 1
+        if y_pred == y_true:
+            correct +=1
         # 2. Otherwise increase wrong by 1
+        else:
+            wrong +=1
         # 3. Always increase total by 1 (even when the prediction is wrong!)
+        total +=1
         # 4. Append y_pred to y_pred_list
+        y_pred_list.append(y_pred)
         # 5. Return the tuple: (correct, wrong, total, y_pred_list)
+        return (correct, wrong, total, y_pred_list)
         pass
 
     # Task 5: Implement calculate_accuracy
@@ -142,10 +159,14 @@ class IrisRuleClassifier:
             float: Accuracy percentage between 0.0 and 100.0.
                    Returns 0.0 if total is zero (protect against division by zero).
         """
-        # If total > 0:
-        #     return (correct / total) * 100
-        # Otherwise return 0.0 to avoid dividing by zero
-        pass
+    # If total > 0:
+    # return (correct / total) * 100
+    # Otherwise return 0.0 to avoid dividing by zero
+        if total > 0 :
+            return (correct / total) *100.0
+        else:
+            return 0.0
+
 
     # Task 6: Implement run_prediction_loop
     def run_prediction_loop(self, dataset):
@@ -169,17 +190,18 @@ class IrisRuleClassifier:
         print("\n=== Start Session 6 Prediction Loop ===")
 
         # for sample in dataset:
-        # y_pred = self.compute_threshold_prediction(<your code here>)
-        # y_true = self.derive_true_label(<your code here>)
-        # correct, wrong, total, y_pred_list = self.update_result_counts(
-        #     correct, wrong, total, y_pred_list, y_pred, y_true
-        # )
-        # print(
-        #     f"id={sample['id']} | true={y_true} | pred={y_pred} | "
-        #     f"petal_length={sample['petal_length']}"
-        # )
+        for sample in dataset:
+            y_pred = self.compute_threshold_prediction(sample)
+            y_true = self.derive_true_label(sample)
+            correct, wrong, total, y_pred_list = self.update_result_counts(
+                correct, wrong, total, y_pred_list, y_pred, y_true
+            )
+            print(
+                f"id={sample['id']} | true={y_true} | pred={y_pred} | "
+                f"petal_length={sample['petal_length']}"
+            )
 
-        # return correct, wrong, total, y_pred_list
+        return correct, wrong, total, y_pred_list
         pass
 
     # Task 7: Implement print_summary
@@ -193,49 +215,59 @@ class IrisRuleClassifier:
             y_pred_list (list): All predictions made.
             accuracy (float): Accuracy percentage.
         """
-        # print("\n=== Session 6 Summary ===")
-        # print("Correct:", <your code here>)
-        # print("Wrong:  ", <your code here>)
-        # print("Total:  ", <your code here>)
-        # print("Accuracy (%):", round(<your code here>, 2))
-        # print("All predictions:", <your code here>)
+        print("\n=== Session 6 Summary ===")
+        print("Correct:", correct)
+        print("Wrong:  ", wrong)
+        print("Total:  ", total)
+        print("Accuracy (%):", round(accuracy, 2))
+        print("All predictions:", y_pred_list)
         pass
 
 
 def main():
 
     # Step 1a: Create a classifier object with a chosen threshold
-    # classifier = IrisRuleClassifier(<your code here>)
-    # print("Threshold:", <your code here>)
-    # print("Positive label:", <your code here>)
-    # print("Negative label:", <your code here>)
+    classifier = IrisRuleClassifier(threshold=2.0)
+    print("Threshold:", classifier.threshold)
+    print("Positive label:",  classifier.positive_label)
+    print("Negative label:", classifier.negative_label)
 
     # Task 2: Implement compute_threshold_prediction
     # Can you write the syntax by urself
-    # sample = <your code here>
-    # prediction = <your code here>
-    # print(<your code here>) # should print: setosa
+    sample = {"petal_length": 1.4, "species":"setosa", "id":"flower1"}
+    prediction = classifier.compute_threshold_prediction(sample)
+    classifier = IrisRuleClassifier(threshold=2.0)
+    print(prediction) # should print: setosa
 
     # Task 3: Implement derive_true_label
-    # sample_setosa = {"species": "setosa", "petal_length": 1.4}
-    # sample_versicolor = {"species": "versicolor", "petal_length": 4.7}
-    # # setosa
-    # print(f"Setosa prediction: {classifier.derive_true_label(sample_setosa)}")
-    # # not_setosa
-    # print(
-    #     f"Versicolor prediction: {classifier.derive_true_label(sample_versicolor)}")
+    sample_setosa = {"species": "setosa", "petal_length": 1.4}
+    sample_versicolor = {"species": "versicolor", "petal_length": 4.7}
+    # setosa
+    print(f"Setosa prediction: {classifier.derive_true_label(sample_setosa)}")
+    # not_setosa
+    print(
+        f"Versicolor prediction: {classifier.derive_true_label(sample_versicolor)}")
+    
+    # # Step 3: Print status messages using classifier.print_status(...)
+    classifier.print_status("Build Dataset")
+    classifier.print_status("Run prediction loop")
+
+    # # Step 4: Run the prediction loop and unpack the returned tuple
+    correct, wrong, total, y_pred_list = classifier.run_prediction_loop(
+     dataset
+    )
 
     # Task 6: Implement run_prediction_loop
     dataset = setup_application_list()
-    # correct, wrong, total, y_pred_list = classifier.run_prediction_loop(<your code here>)
+    correct, wrong, total, y_pred_list = classifier.run_prediction_loop(dataset)
 
     # Step 5: Calculate accuracy from the returned counters
     # >> Just uncomment the code below, as you have already implemented calculate_accuracy in Task 5.
-    # accuracy = classifier.calculate_accuracy(correct,<your code here>)
+    accuracy = classifier.calculate_accuracy(correct, total)
 
     # Step 7: Print a final status message and the summary
-    # classifier.print_status(<your code here>)
-    # classifier.print_summary(<your code here>)
+    classifier.print_status("Print Summary")
+    classifier.print_summary(correct, wrong, total, y_pred_list, accuracy)
     pass
 
 
